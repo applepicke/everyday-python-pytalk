@@ -21,6 +21,11 @@ prefix = 'You are a'
 if len(sys.argv) > 1:
 	prefix = '%s is a' % sys.argv[1]
 
-phrase = ' '.join([prefix] + map(randomize, read_insults('insults.txt')))
+items = map(randomize, read_insults('insults.txt'))
+
+if items[0].startswith(('a', 'e', 'i', 'o', 'u')):
+	prefix += 'n'
+
+phrase = ' '.join([prefix] + items)
 
 print '%s.' % phrase
