@@ -1,7 +1,10 @@
 import sys
 import getpass
 import pickle
+import random
+import string
 
+from simplecrypt import encrypt, decrypt
 from passlib.hash import sha256_crypt
 
 class PasswordManager():
@@ -9,7 +12,7 @@ class PasswordManager():
 	filename = 'secret_password_file.txt'
 	password = ''
 
-	commands = ['add', 'remove', 'setpass', 'get']
+	commands = ['add', 'remove', 'get', 'list']
 	filedata = {}
 
 	def __init__(self):
@@ -47,6 +50,15 @@ class PasswordManager():
 	def verify_password(self, password):
 		return sha256_crypt.verify(password, self.password_hash)
 
+	def encrypt_password(self, secret, password):
+		return encrypt(secret, password)
+
+	def decrypt_password(self, secret, encrypted):
+		return decrypt(secret, encrypted)
+
+	def random_string(self, len=12):
+		return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(len))
+
 	def password_check(self):
 		if not self.is_password_set:
 			password = getpass.getpass('Please enter a password for first time use: ')
@@ -68,19 +80,41 @@ class PasswordManager():
 
 		self.password = password
 
-	def add(self, website):
+	def add(self, website, *args):
+		password = self.random_string()
+
+		if website in self.filedata.keys():
+			print 'Error: %s already exists' % website
+			return
+
+		self.filedata[website] = self.encrypt_password(self.password, password)
+		print 'Your new password is %s' % password
+
+	def get(self, website, *args):
+		encrypted = self.filedata.get(website)
+
+		if not encrypted:
+			print 'Error: no password set for %s' % website
+
+		password = self.decrypt_password(self.password, encrypted)
+		print 'Password for %s: %s' % (website, password)
+
+	def remove(self, website, *args):
+		if website not in self.filedata.keys():
+			print 'Error: %s does not exist' % website
+			return
+
+		del self.filedata[website]
+		print 'Successfully removed %s' % website
+
+	def list(self, *args):
 		print ''
-
-	def remove(self, website):
-		print 'remove'
-
-	def get(self, website):
-		print 'hello'
-
-	def setpass(self, password):
-		self.filedata['password'] = None
-		self.password_check()
-		print 'New password set!'
+		print 'Websites'
+		print '--------'
+		for key in self.filedata.keys():
+			if key != 'password':
+				print key
+		print ''
 
 manager = PasswordManager()
 
@@ -90,6 +124,6 @@ if command not in manager.commands:
 	print '"%s" is not a valid command.' % command
 	sys.exit()
 
-getattr(manager, command)(*sys.argv[1:])
+getattr(manager, command)(*sys.argv[2:])
 manager.save()
 
