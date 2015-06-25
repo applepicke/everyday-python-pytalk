@@ -1,0 +1,54 @@
+ME!!!
+-----
+
+@applepicke
+github.com/applepicke
+soundclound.com/applepicke
+
+----------------------------------------------------------
+git clone git@github.com:applepicke/everyday-python-pytalk
+----------------------------------------------------------
+
+ITEMS
+-----
+
+Overview of whole project
+
+insulter
+=========
+- overview & demo
+
+- import statements
+- functions
+- context managers
+- for loops
+- random
+- string formatting
+- startswith
+- command line arguments
+- join
+
+password_manager
+================
+- overview & demo
+
+- scoped imports
+- classes
+	- __init__
+	- self
+	- properties
+	- unpacking arguments
+
+- serialization with pickle
+- hashing vs encryption
+
+
+next_movie
+==========
+- overview & demo
+
+- modules
+- requests library
+- 3rd party apis
+
+
