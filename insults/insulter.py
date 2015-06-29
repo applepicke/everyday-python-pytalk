@@ -1,31 +1,37 @@
-import re
-import sys
 import math
 import random
+import sys
+
 
 def read_insults(filename):
-	with open(filename) as f:
-		columns = [[], [], []]
+    columns = [[], [], []]
+    with open(filename) as f:
+        for line in f:
+            items = line.split()
+            for i, col in enumerate(columns):
+                col.append(items[i])
 
-		for line in f:
-			items = re.split('\s+', line)
-			for i, col in enumerate(columns):
-				col.append(items[i])
+    return columns
 
-		return columns
 
 def randomize(column):
-	return column[int(math.floor(random.random() * len(column)))]
+    return column[int(math.floor(random.random() * len(column)))]
 
-prefix = 'You are a'
-if len(sys.argv) > 1:
-	prefix = '%s is a' % sys.argv[1]
 
-items = map(randomize, read_insults('insults.txt'))
+def main():
+    prefix = 'You are a'
 
-if items[0].startswith(('a', 'e', 'i', 'o', 'u')):
-	prefix += 'n'
+    if len(sys.argv) > 1:
+        prefix = '%s is a' % sys.argv[1]
 
-phrase = ' '.join([prefix] + items)
+    items = [randomize(i) for i in read_insults('insults.txt')]
 
-print '%s.' % phrase
+    if items[0].startswith(('a', 'e', 'i', 'o', 'u')):
+        prefix += 'n'
+
+    phrase = ' '.join([prefix] + items)
+    print '{0}.'.format(phrase)
+
+
+if __name__ == '__main__':
+    main()
